@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Crown, Flame, Award, Download, Share2, Sparkles, Zap } from 'lucide-react';
 import axiosClient from '../api/axiosClient.js';
 import { useAuthStore } from '../stores/authStore.js';
+import { useToastStore } from '../stores/toastStore.js';
 import html2canvas from 'html2canvas';
 import Loader from '../components/Loader.jsx';
 
@@ -16,6 +17,7 @@ const LEAGUE_COLORS = {
 export default function ProfileCardPage() {
   const cardRef = useRef(null);
   const { user: authUser } = useAuthStore();
+  const { addToast } = useToastStore();
   const [isSharing, setIsSharing] = useState(false);
 
   const { data, isLoading } = useQuery({
@@ -47,6 +49,33 @@ export default function ProfileCardPage() {
   const leagueStyle = LEAGUE_COLORS[league] || LEAGUE_COLORS.Bronze;
 
   const handleDownload = async () => {
+    // Intercept computed styles to filter out oklch color parsing errors in html2canvas
+    const originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = function (el, pseudo) {
+      const style = originalGetComputedStyle(el, pseudo);
+      return new Proxy(style, {
+        get(target, prop) {
+          if (prop === 'getPropertyValue') {
+            return (propertyName) => {
+              const val = target.getPropertyValue(propertyName);
+              if (typeof val === 'string' && val.includes('oklch')) {
+                return 'rgba(0, 0, 0, 0)';
+              }
+              return val;
+            };
+          }
+          const value = target[prop];
+          if (typeof value === 'string' && value.includes('oklch')) {
+            return 'rgba(0, 0, 0, 0)';
+          }
+          if (typeof value === 'function') {
+            return value.bind(target);
+          }
+          return value;
+        }
+      });
+    };
+
     try {
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
@@ -57,9 +86,13 @@ export default function ProfileCardPage() {
       link.download = `${profile?.username || 'varnam'}-profile-card.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
+      addToast('Profile card downloaded successfully!', 'success');
     } catch (err) {
       console.error(err);
-      alert('Failed to download profile card. Try copying/sharing instead.');
+      addToast('Failed to download profile card. Try sharing instead.', 'error');
+    } finally {
+      // Restore original computed styles lookup method
+      window.getComputedStyle = originalGetComputedStyle;
     }
   };
 
@@ -69,12 +102,12 @@ export default function ProfileCardPage() {
       if (navigator.share) {
         await navigator.share({
           title: `${profile?.username}'s Varnam Profile`,
-          text: `Check out my language learning progress on Varnam! Level ${level} | ${xpTotal} XP | ${streak} day streak 🔥`,
+          text: `Check out my progress on Varnam! Level ${level} | ${xpTotal} XP | ${streak} day streak 🔥`,
           url: window.location.origin,
         });
       } else {
-        await navigator.clipboard.writeText(`${profile?.username} is learning languages on Varnam! Level ${level} | ${xpTotal} XP | ${streak} day streak 🔥 — https://varnam-app.vercel.app`);
-        alert('Profile link copied to clipboard!');
+        await navigator.clipboard.writeText(`${profile?.username} is learning on Varnam! Level ${level} | ${xpTotal} XP | ${streak} day streak 🔥 — https://varnam-app.vercel.app`);
+        addToast('Profile link copied to clipboard!', 'success');
       }
     } catch (err) {
       // user cancelled
@@ -133,7 +166,7 @@ export default function ProfileCardPage() {
           <div className="space-y-1">
             <h2 className="text-2xl font-heading font-bold" style={{ color: '#ffffff' }}>{profile?.username || 'Learner'}</h2>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold px-3 py-1 rounded-full text-center" style={{ background: leagueStyle.bg, color: leagueStyle.text }}>
+              <span className="text-xs font-bold px-3 py-1 rounded-full text-center animate-pulse" style={{ background: leagueStyle.bg, color: leagueStyle.text }}>
                 {league} League
               </span>
               <span className="text-xs" style={{ color: '#a1a1aa' }}>

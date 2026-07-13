@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, XCircle, RotateCcw, Layers, ArrowLeft, Trophy } from 'lucide-react';
 import axiosClient from '../api/axiosClient.js';
@@ -30,45 +30,59 @@ function FlashCard({ card, onRemember, onForgot, isTop }) {
   };
 
   return (
-    <div
-      className={`absolute inset-0 ${exitClass}`}
-      style={{ perspective: '1200px' }}
+    <div 
+      className={`absolute inset-0 transition-all duration-300 ${exitClass}`} 
+      style={{ zIndex: isTop ? 20 : 10 }}
     >
-      <div
-        className={`flashcard-inner w-full h-full ${flipped ? 'flipped' : ''}`}
+      <div 
+        className={`w-full h-full rounded-3xl border p-8 flex flex-col items-center justify-center gap-4 transition-all duration-500 cursor-pointer ${
+          flipped 
+            ? 'border-pink-500/30 bg-gradient-to-br from-pink-500/5 to-rose-500/5 dark:from-pink-500/10 dark:to-rose-500/10 shadow-[0_0_40px_rgba(236,72,153,0.15)]' 
+            : 'border-zinc-200/40 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 shadow-premium'
+        }`}
         onClick={() => isTop && setFlipped(f => !f)}
       >
-        {/* Front */}
-        <div className="flashcard-front absolute inset-0 p-8 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/40 bg-white dark:bg-zinc-900 shadow-premium flex flex-col items-center justify-center gap-4 cursor-pointer">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-pink-600 dark:text-pink-400">{card.language}</div>
-          <h2 className="text-5xl font-heading font-bold text-zinc-900 dark:text-zinc-50">{card.word}</h2>
-          <p className="text-sm text-zinc-400 flex items-center gap-2">
-            <RotateCcw className="w-3.5 h-3.5" />
-            Click to reveal translation
-          </p>
-        </div>
-
-        {/* Back */}
-        <div className="flashcard-back absolute inset-0 p-8 rounded-3xl border border-pink-500/30 bg-gradient-to-br from-pink-500/5 to-rose-500/5 dark:from-pink-500/10 dark:to-rose-500/10 shadow-premium flex flex-col items-center justify-center gap-4 cursor-pointer">
-          <div className="text-[10px] font-bold uppercase tracking-widest text-pink-600 dark:text-pink-400">Translation</div>
-          <h2 className="text-4xl font-heading font-bold text-pink-600 dark:text-pink-400">{card.translation}</h2>
-          <p className="text-sm text-zinc-500 italic text-center max-w-xs">{card.example}</p>
-        </div>
+        {!flipped ? (
+          <>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-pink-600 dark:text-pink-400">
+              {card.language || 'Vocabulary'}
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-zinc-900 dark:text-zinc-50 text-center px-4 leading-tight break-all max-w-full">
+              {card.word}
+            </h2>
+            <p className="text-sm text-zinc-400 flex items-center gap-2 mt-4 select-none">
+              <RotateCcw className="w-3.5 h-3.5" />
+              Click to reveal translation
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+              Translation
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-heading font-bold text-pink-500 text-center px-4 leading-tight break-all max-w-full">
+              {card.translation}
+            </h2>
+            <p className="text-sm text-zinc-500 italic text-center max-w-xs mt-2 leading-relaxed px-2">
+              {card.exampleSentence || card.example}
+            </p>
+          </>
+        )}
       </div>
 
       {/* Action buttons (only on top card, only when flipped) */}
       {isTop && flipped && (
-        <div className="absolute -bottom-16 left-0 right-0 flex justify-center gap-6">
+        <div className="absolute -bottom-16 left-0 right-0 flex justify-center gap-6 z-30 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <button
             onClick={e => { e.stopPropagation(); handleForgot(); }}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-red-500/20 bg-red-500/10 text-red-500 font-bold text-sm hover:bg-red-500/20 transition-all active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-red-500/20 bg-red-500/10 text-red-500 font-bold text-sm hover:bg-red-500/20 transition-all active:scale-95 shadow-md shadow-red-500/5 select-none"
           >
             <XCircle className="w-5 h-5" />
             Forgot
           </button>
           <button
             onClick={e => { e.stopPropagation(); handleRemember(); }}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 font-bold text-sm hover:bg-emerald-500/20 transition-all active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 font-bold text-sm hover:bg-emerald-500/20 transition-all active:scale-95 shadow-md shadow-emerald-500/5 select-none"
           >
             <CheckCircle2 className="w-5 h-5" />
             Remember
@@ -103,7 +117,9 @@ export default function FlashcardsPage() {
     mutationFn: async ({ cardId, result }) => {
       try {
         await axiosClient.post(`/vocabulary/flashcards/${cardId}/review`, { result });
-      } catch {}
+      } catch (err) {
+        console.error(err);
+      }
     }
   });
 
@@ -143,8 +159,8 @@ export default function FlashcardsPage() {
     const total = sessionStats.remembered + sessionStats.forgot;
     const accuracy = total > 0 ? Math.round((sessionStats.remembered / total) * 100) : 0;
     return (
-      <div className="flex items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-950 p-6">
-        <div className="w-full max-w-md p-8 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium text-center space-y-8">
+      <div className="flex items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-950 p-6 transition-colors duration-300">
+        <div className="w-full max-w-md p-8 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium text-center space-y-8 animate-in zoom-in duration-300">
           <div className="space-y-3">
             <div className="text-6xl">🎉</div>
             <h2 className="text-3xl font-heading font-bold text-zinc-900 dark:text-zinc-50">Session Complete!</h2>
@@ -166,7 +182,7 @@ export default function FlashcardsPage() {
           <div className="flex gap-3">
             <button
               onClick={() => { setCurrentIndex(0); setIsComplete(false); setSessionStats({ remembered: 0, forgot: 0 }); }}
-              className="flex-1 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
+              className="flex-1 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 text-sm font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all text-zinc-655 dark:text-zinc-300"
             >
               Restart
             </button>
@@ -174,7 +190,7 @@ export default function FlashcardsPage() {
               onClick={() => navigate('/vocabulary')}
               className="flex-1 btn-premium py-3 text-sm"
             >
-              View Vocabulary
+              View Notebook
             </button>
           </div>
         </div>
@@ -183,7 +199,7 @@ export default function FlashcardsPage() {
   }
 
   return (
-    <div className="px-6 py-8 max-w-3xl mx-auto w-full space-y-8">
+    <div className="px-6 py-8 max-w-3xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       {/* Header */}
       <header className="flex items-center justify-between">
         <div>
@@ -207,11 +223,11 @@ export default function FlashcardsPage() {
 
       {/* Session stats mini */}
       <div className="flex gap-3">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-xs font-bold">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-xs font-bold select-none">
           <CheckCircle2 className="w-3.5 h-3.5" />
           {sessionStats.remembered} remembered
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold select-none">
           <XCircle className="w-3.5 h-3.5" />
           {sessionStats.forgot} forgotten
         </div>
@@ -225,7 +241,7 @@ export default function FlashcardsPage() {
             key={card.id}
             className="absolute inset-0 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/40 bg-white dark:bg-zinc-900"
             style={{
-              transform: `translateY(${(stackIdx + 1) * 6}px) scale(${1 - (stackIdx + 1) * 0.03})`,
+              transform: `translateY(${(stackIdx + 1) * 8}px) scale(${1 - (stackIdx + 1) * 0.04})`,
               zIndex: 10 - stackIdx,
             }}
           />
@@ -233,20 +249,18 @@ export default function FlashcardsPage() {
 
         {/* Top card */}
         {remainingCards.length > 0 && (
-          <div style={{ zIndex: 20 }}>
-            <FlashCard
-              key={remainingCards[0].id}
-              card={remainingCards[0]}
-              isTop={true}
-              onRemember={handleRemember}
-              onForgot={handleForgot}
-            />
-          </div>
+          <FlashCard
+            key={remainingCards[0].id}
+            card={remainingCards[0]}
+            isTop={true}
+            onRemember={handleRemember}
+            onForgot={handleForgot}
+          />
         )}
       </div>
 
       {/* Hint */}
-      <p className="text-center text-xs text-zinc-400 mt-20">Click the card to flip, then mark Remember or Forgot</p>
+      <p className="text-center text-xs text-zinc-400 mt-20 select-none">Click the card to flip, then mark Remember or Forgot</p>
     </div>
   );
 }
