@@ -22,10 +22,11 @@ const PORT = process.env.PORT || 5000;
 // Register Fastify Middlewares & Plugins
 await fastify.register(cors, {
   origin: [
-    process.env.NODE_ENV === "prod"
-      ? process.env.CLIENT_URL
-      : "http://localhost:5173",
-  ], // React client domains
+    "https://varnam-app.vercel.app", // Production Vercel frontend
+    process.env.CLIENT_URL,          // Additional frontend URL from env (if set)
+    "http://localhost:5173",         // Local development
+    "http://localhost:4173",         // Local preview
+  ].filter(Boolean), // Remove undefined/null entries
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 });

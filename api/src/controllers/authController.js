@@ -7,11 +7,12 @@ import { eq } from 'drizzle-orm';
 import 'dotenv/config';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-change-me-in-production';
+const IS_PROD = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod';
 const COOKIE_OPTIONS = {
   path: '/',
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax', // Lax works best with local decoupled development ports
+  secure: IS_PROD,           // Must be true for sameSite: 'none'
+  sameSite: IS_PROD ? 'none' : 'lax', // 'none' required for cross-domain (Vercel → Render)
   maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
 };
 
@@ -52,13 +53,13 @@ export const authController = {
       // Generate JWT
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-      // Set cookie
+      // Set cookie (may be blocked cross-domain; client also reads token from body)
       reply.setCookie('varnam_token', token, COOKIE_OPTIONS);
 
       // Remove sensitive data
       delete user.password;
 
-      return { success: true, user };
+      return { success: true, user, token };
     } catch (error) {
       request.log.error('Signup error:', error);
       reply.status(500).send({ error: 'Internal server error during registration.' });
@@ -89,13 +90,13 @@ export const authController = {
       // Generate JWT
       const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-      // Set cookie
+      // Set cookie (may be blocked cross-domain; client also reads token from body)
       reply.setCookie('varnam_token', token, COOKIE_OPTIONS);
 
       // Remove sensitive data
       delete user.password;
 
-      return { success: true, user };
+      return { success: true, user, token };
     } catch (error) {
       request.log.error('Login error:', error);
       reply.status(500).send({ error: 'Internal server error during authentication.' });
