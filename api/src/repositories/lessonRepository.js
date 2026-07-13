@@ -1,8 +1,47 @@
 import { db } from '../db/index.js';
 import { languages, units, chapters, lessons, exercises } from '../db/schema.js';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, inArray } from 'drizzle-orm';
 
 export const lessonRepository = {
+  async getCurriculumTree(languageId) {
+    const langIdNum = parseInt(languageId);
+    const unitsList = await db.select().from(units).where(eq(units.languageId, langIdNum)).orderBy(asc(units.number));
+    if (unitsList.length === 0) return [];
+
+    const unitIds = unitsList.map(u => u.id);
+    const chaptersList = await db.select().from(chapters).where(inArray(chapters.unitId, unitIds)).orderBy(asc(chapters.number));
+    
+    let lessonsList = [];
+    if (chaptersList.length > 0) {
+      const chapterIds = chaptersList.map(c => c.id);
+      lessonsList = await db.select().from(lessons).where(inArray(lessons.chapterId, chapterIds)).orderBy(asc(lessons.number));
+    }
+
+    const lessonsByChapter = {};
+    for (const lesson of lessonsList) {
+      if (!lessonsByChapter[lesson.chapterId]) {
+        lessonsByChapter[lesson.chapterId] = [];
+      }
+      lessonsByChapter[lesson.chapterId].push(lesson);
+    }
+
+    const chaptersByUnit = {};
+    for (const chapter of chaptersList) {
+      if (!chaptersByUnit[chapter.unitId]) {
+        chaptersByUnit[chapter.unitId] = [];
+      }
+      chaptersByUnit[chapter.unitId].push({
+        ...chapter,
+        lessons: lessonsByChapter[chapter.id] || []
+      });
+    }
+
+    return unitsList.map(unit => ({
+      ...unit,
+      chapters: chaptersByUnit[unit.id] || []
+    }));
+  },
+
   async getLanguages() {
     return await db.select().from(languages).where(eq(languages.isActive, true));
   },

@@ -44,7 +44,7 @@ self.addEventListener('fetch', (event) => {
     fetch(event.request)
       .then((response) => {
         // Cache fresh GET requests for local static assets
-        if (response.status === 200 && event.request.method === 'GET' && !url.pathname.includes('chrome-extension')) {
+        if (response.status === 200 && event.request.method === 'GET' && (url.protocol === 'http:' || url.protocol === 'https:')) {
           const responseCopy = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseCopy);

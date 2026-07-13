@@ -6,10 +6,12 @@ import axiosClient from '../../api/axiosClient.js';
 import { useToastStore } from '../../stores/toastStore.js';
 import sound from '../../components/SoundEngine.js';
 import Modal from '../../components/Modal.jsx';
+import { useConfirmStore } from '../../stores/confirmStore.js';
 
 export default function AdminExercisesPage() {
   const queryClient = useQueryClient();
   const { addToast } = useToastStore();
+  const confirm = useConfirmStore(state => state.confirm);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -136,9 +138,15 @@ export default function AdminExercisesPage() {
     setFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     sound.playClick();
-    if (window.confirm('Are you sure you want to delete this quiz exercise?')) {
+    const ok = await confirm({
+      title: 'Delete Exercise?',
+      message: 'Are you sure you want to delete this quiz exercise?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    });
+    if (ok) {
       deleteMutation.mutate(id);
     }
   };

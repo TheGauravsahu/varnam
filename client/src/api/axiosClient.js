@@ -27,8 +27,14 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Clear stored token on 401 so the user gets redirected to login
+      // Clear stored token on 401 and log out the user from auth state
       localStorage.removeItem("varnam_token");
+      import("../stores/authStore.js").then((m) => {
+        m.useAuthStore.setState({ user: null, isAuthenticated: false, isLoading: false });
+      });
+      import("../stores/toastStore.js").then((m) => {
+        m.useToastStore.getState().addToast("Session expired. Please login again.", "error");
+      });
     }
     return Promise.reject(error);
   },

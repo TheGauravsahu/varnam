@@ -44,4 +44,28 @@ export default async function adminRoutes(fastify, options) {
   fastify.get('/users', adminController.getUsers);
   fastify.put('/users/:id', adminController.updateUser);
   fastify.delete('/users/:id', adminController.deleteUser);
+
+  // Daily Quests CRUD
+  fastify.get('/quests', adminController.getQuests);
+  fastify.post('/quests', adminController.createQuest);
+  fastify.put('/quests/:id', adminController.updateQuest);
+  fastify.delete('/quests/:id', adminController.deleteQuest);
+
+  // Weekly Missions CRUD
+  fastify.get('/missions', adminController.getMissions);
+  fastify.post('/missions', adminController.createMission);
+  fastify.put('/missions/:id', adminController.updateMission);
+  fastify.delete('/missions/:id', adminController.deleteMission);
+
+  // Seasonal Events CRUD
+  fastify.get('/events', adminController.getEvents);
+  fastify.post('/events', adminController.createEvent);
+  fastify.put('/events/:id', adminController.updateEvent);
+  fastify.delete('/events/:id', adminController.deleteEvent);
+
+  // Avatar Items CRUD
+  fastify.get('/avatar-items', adminController.getAvatarItems);
+  fastify.post('/avatar-items', adminController.createAvatarItem);
+  fastify.put('/avatar-items/:id', adminController.updateAvatarItem);
+  fastify.delete('/avatar-items/:id', adminController.deleteAvatarItem);
 }

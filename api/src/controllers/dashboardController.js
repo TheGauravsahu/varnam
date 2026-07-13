@@ -26,26 +26,8 @@ export const dashboardController = {
         return;
       }
 
-      // Fetch all units, chapters, and lessons for this language
-      const unitsList = await lessonRepository.getUnits(currentLanguage.id);
-      const unitsWithChapters = [];
-
-      for (const unit of unitsList) {
-        const chaptersList = await lessonRepository.getChapters(unit.id);
-        const chaptersWithLessons = [];
-
-        for (const chapter of chaptersList) {
-          const lessonsList = await lessonRepository.getLessons(chapter.id);
-          chaptersWithLessons.push({
-            ...chapter,
-            lessons: lessonsList
-          });
-        }
-        unitsWithChapters.push({
-          ...unit,
-          chapters: chaptersWithLessons
-        });
-      }
+      // Fetch all units, chapters, and lessons for this language (optimized to 3 batch queries)
+      const unitsWithChapters = await lessonRepository.getCurriculumTree(currentLanguage.id);
 
       // Fetch completed lessons for curriculum map lock states
       const completedLessons = await progressRepository.getCompletedLessons(request.user.id);

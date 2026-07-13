@@ -5,10 +5,12 @@ import { ArrowLeft, Users, Trash2, Shield, User, ShieldAlert } from 'lucide-reac
 import axiosClient from '../../api/axiosClient.js';
 import { useToastStore } from '../../stores/toastStore.js';
 import sound from '../../components/SoundEngine.js';
+import { useConfirmStore } from '../../stores/confirmStore.js';
 
 export default function AdminUsersPage() {
   const queryClient = useQueryClient();
   const { addToast } = useToastStore();
+  const confirm = useConfirmStore(state => state.confirm);
 
   // 1. Fetch Users
   const { data: usersRes, isLoading } = useQuery({
@@ -57,17 +59,29 @@ export default function AdminUsersPage() {
     }
   });
 
-  const toggleRole = (u) => {
+  const toggleRole = async (u) => {
     sound.playClick();
     const newRole = u.role === 'admin' ? 'user' : 'admin';
-    if (window.confirm(`Are you sure you want to change role of ${u.username} to ${newRole}?`)) {
+    const ok = await confirm({
+      title: 'Change User Role?',
+      message: `Are you sure you want to change the role of user "${u.username}" to "${newRole}"?`,
+      confirmText: 'Change Role',
+      cancelText: 'Cancel'
+    });
+    if (ok) {
       saveMutation.mutate({ id: u.id, role: newRole });
     }
   };
-
-  const handleDelete = (id) => {
+ 
+  const handleDelete = async (id) => {
     sound.playClick();
-    if (window.confirm('Are you sure you want to permanently delete this user account? All progress, stats, and achievements will be lost!')) {
+    const ok = await confirm({
+      title: 'Delete User Account?',
+      message: 'Are you sure you want to permanently delete this user account? All progress, stats, and achievements will be lost!',
+      confirmText: 'Delete Account',
+      cancelText: 'Cancel'
+    });
+    if (ok) {
       deleteMutation.mutate(id);
     }
   };

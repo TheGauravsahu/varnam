@@ -17,11 +17,12 @@ export default function Logo({ className = "w-6 h-6" }) {
       {/* Premium minimal geometric abstract folding sparkle/star emblem */}
       <path
         d="M16 2L20.5 11.5L30 16L20.5 20.5L16 30L11.5 20.5L2 16L11.5 11.5L16 2Z"
-        fill="url(#logo-gradient)"
+        fill="currentColor"
       />
       <path
         d="M16 8L18.25 13.75L24 16L18.25 18.25L16 24L13.75 18.25L8 16L13.75 13.75L16 8Z"
-        fill="#FFFFFF"
+        fill="currentColor"
+        className="text-white dark:text-zinc-900"
         opacity="0.9"
       />
     </svg>

@@ -12,6 +12,10 @@ import dashboardRoutes from "./routes/dashboardRoutes.js";
 import lessonRoutes from "./routes/lessonRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import gamificationRoutes from "./routes/gamificationRoutes.js";
+import avatarRoutes from "./routes/avatarRoutes.js";
+import vocabularyRoutes from "./routes/vocabularyRoutes.js";
+import communityRoutes from "./routes/communityRoutes.js";
 
 const fastify = Fastify({
   logger: true, // Pure default JSON logs (safe, zero extra package dependencies)
@@ -55,6 +59,10 @@ await fastify.register(dashboardRoutes, { prefix: "/api/dashboard" });
 await fastify.register(lessonRoutes, { prefix: "/api/lessons" });
 await fastify.register(profileRoutes, { prefix: "/api/profile" });
 await fastify.register(adminRoutes, { prefix: "/api/admin" });
+await fastify.register(gamificationRoutes, { prefix: "/api/gamification" });
+await fastify.register(avatarRoutes, { prefix: "/api/avatar" });
+await fastify.register(vocabularyRoutes, { prefix: "/api/vocabulary" });
+await fastify.register(communityRoutes, { prefix: "/api/community" });
 
 // Health Check route
 fastify.get("/health", async () => {

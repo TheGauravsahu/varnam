@@ -12,6 +12,9 @@ import {
   Calendar,
   Award,
   ClipboardX,
+  Target,
+  Sparkles,
+  ArrowRight
 } from "lucide-react";
 import axiosClient from "../api/axiosClient.js";
 import sound from "../components/SoundEngine.js";
@@ -34,6 +37,26 @@ export default function DashboardPage() {
       return res.data;
     },
   });
+
+  // Fetch Daily Quests
+  const { data: questsData } = useQuery({
+    queryKey: ["daily-quests"],
+    queryFn: async () => {
+      const res = await axiosClient.get("/gamification/quests");
+      return res.data;
+    },
+  });
+  const quests = questsData?.quests || [];
+ 
+  // Fetch Seasonal Events
+  const { data: eventsData } = useQuery({
+    queryKey: ["seasonal-events"],
+    queryFn: async () => {
+      const res = await axiosClient.get("/gamification/events");
+      return res.data;
+    },
+  });
+  const activeEvents = eventsData?.events || [];
 
   // Language selection mutation
   const selectLanguageMutation = useMutation({
@@ -215,6 +238,30 @@ export default function DashboardPage() {
         </div>
       </header>
 
+      {/* Seasonal Event Banner */}
+      {activeEvents && activeEvents.length > 0 && (
+        <div className="p-5 rounded-3xl border border-pink-500/25 bg-gradient-to-r from-pink-500/10 to-rose-500/10 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl animate-bounce">{activeEvents[0].emoji || '🪔'}</span>
+            <div>
+              <h4 className="text-sm font-heading font-black text-pink-600 dark:text-pink-400">
+                🎉 Active Seasonal Event: {activeEvents[0].name}
+              </h4>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                {activeEvents[0].description || 'Complete lessons to collect items and unlock special themes!'}
+              </p>
+            </div>
+          </div>
+          <Link 
+            to="/gamification" 
+            className="btn-premium py-2 px-5 text-xs flex items-center gap-1.5 shrink-0"
+          >
+            <span>Participate</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
+
       {/* 2. Dashboard Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Interactive Lesson Tree Map */}
@@ -332,6 +379,43 @@ export default function DashboardPage() {
 
         {/* Right Column: Dynamic Sidebars */}
         <div className="space-y-8">
+          {/* Today's Quests Widget */}
+          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium space-y-4 group hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <h3 className="font-heading font-semibold text-base group-hover:text-pink-500 transition-colors duration-300 flex items-center gap-1.5">
+                <Target className="w-5 h-5 text-pink-500" />
+                <span>Today's Quests</span>
+              </h3>
+              <Link to="/gamification" className="text-xs text-pink-500 font-bold hover:underline">
+                View All
+              </Link>
+            </div>
+
+            <div className="space-y-3.5">
+              {quests.length === 0 ? (
+                <p className="text-xs text-zinc-450 dark:text-zinc-500 text-center py-2">No quests active for today.</p>
+              ) : (
+                quests.slice(0, 3).map((quest) => {
+                  const progressPct = Math.min(100, Math.floor(((quest.progress || 0) / quest.targetCount) * 100));
+                  return (
+                    <div key={quest.id} className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                        <span>{quest.title}</span>
+                        <span className="font-number">{quest.progress || 0} / {quest.targetCount}</span>
+                      </div>
+                      <div className="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-pink-500 to-rose-450 rounded-full transition-all duration-500" 
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
           {/* Level Progression Card */}
           <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-xl shadow-premium space-y-4 group hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] transition-all duration-300">
             <div className="flex items-center gap-3">

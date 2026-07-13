@@ -1,5 +1,5 @@
 import { db } from '../db/index.js';
-import { languages, units, chapters, lessons, exercises, users, achievements } from '../db/schema.js';
+import { languages, units, chapters, lessons, exercises, users, achievements, dailyQuests, weeklyMissions, seasonalEvents, avatarItems } from '../db/schema.js';
 import { eq } from 'drizzle-orm';
 import * as seedData from '../db/seedData.js';
 import { redisService } from '../services/redisService.js';
@@ -441,5 +441,185 @@ export const adminController = {
     await invalidateAdminCaches('users');
     
     return { success: true, message: 'User deleted.' };
+  },
+
+  // ─── DAILY QUESTS CRUD ───────────────────────────────────────────────────────
+  async getQuests(request, reply) {
+    const list = await db.select().from(dailyQuests);
+    return { success: true, data: list };
+  },
+  async createQuest(request, reply) {
+    const body = request.body || {};
+    const [inserted] = await db.insert(dailyQuests).values({
+      code: body.code,
+      title: body.title,
+      description: body.description,
+      icon: body.icon || 'target',
+      xpReward: parseInt(body.xpReward || 50),
+      coinReward: parseInt(body.coinReward || 20),
+      targetCount: parseInt(body.targetCount || 1),
+      questType: body.questType || 'lesson',
+      isActive: body.isActive !== false
+    }).returning();
+    await invalidateAdminCaches('quests');
+    return { success: true, data: inserted };
+  },
+  async updateQuest(request, reply) {
+    const id = parseInt(request.params.id);
+    const body = request.body || {};
+    const [updated] = await db.update(dailyQuests).set({
+      code: body.code,
+      title: body.title,
+      description: body.description,
+      icon: body.icon,
+      xpReward: body.xpReward !== undefined ? parseInt(body.xpReward) : undefined,
+      coinReward: body.coinReward !== undefined ? parseInt(body.coinReward) : undefined,
+      targetCount: body.targetCount !== undefined ? parseInt(body.targetCount) : undefined,
+      questType: body.questType,
+      isActive: body.isActive
+    }).where(eq(dailyQuests.id, id)).returning();
+    await invalidateAdminCaches('quests');
+    return { success: true, data: updated };
+  },
+  async deleteQuest(request, reply) {
+    const id = parseInt(request.params.id);
+    await db.delete(dailyQuests).where(eq(dailyQuests.id, id));
+    await invalidateAdminCaches('quests');
+    return { success: true, message: 'Quest deleted.' };
+  },
+
+  // ─── WEEKLY MISSIONS CRUD ────────────────────────────────────────────────────
+  async getMissions(request, reply) {
+    const list = await db.select().from(weeklyMissions);
+    return { success: true, data: list };
+  },
+  async createMission(request, reply) {
+    const body = request.body || {};
+    const [inserted] = await db.insert(weeklyMissions).values({
+      code: body.code,
+      title: body.title,
+      description: body.description,
+      xpRequired: parseInt(body.xpRequired || 1500),
+      reward: typeof body.reward === 'string' ? JSON.parse(body.reward) : (body.reward || {}),
+      isActive: body.isActive !== false
+    }).returning();
+    await invalidateAdminCaches('missions');
+    return { success: true, data: inserted };
+  },
+  async updateMission(request, reply) {
+    const id = parseInt(request.params.id);
+    const body = request.body || {};
+    const [updated] = await db.update(weeklyMissions).set({
+      code: body.code,
+      title: body.title,
+      description: body.description,
+      xpRequired: body.xpRequired !== undefined ? parseInt(body.xpRequired) : undefined,
+      reward: body.reward ? (typeof body.reward === 'string' ? JSON.parse(body.reward) : body.reward) : undefined,
+      isActive: body.isActive
+    }).where(eq(weeklyMissions.id, id)).returning();
+    await invalidateAdminCaches('missions');
+    return { success: true, data: updated };
+  },
+  async deleteMission(request, reply) {
+    const id = parseInt(request.params.id);
+    await db.delete(weeklyMissions).where(eq(weeklyMissions.id, id));
+    await invalidateAdminCaches('missions');
+    return { success: true, message: 'Mission deleted.' };
+  },
+
+  // ─── SEASONAL EVENTS CRUD ────────────────────────────────────────────────────
+  async getEvents(request, reply) {
+    const list = await db.select().from(seasonalEvents);
+    return { success: true, data: list };
+  },
+  async createEvent(request, reply) {
+    const body = request.body || {};
+    const [inserted] = await db.insert(seasonalEvents).values({
+      code: body.code,
+      name: body.name,
+      description: body.description,
+      emoji: body.emoji || '🎉',
+      themeColor: body.themeColor || 'from-pink-500 to-rose-500',
+      startDate: new Date(body.startDate),
+      endDate: new Date(body.endDate),
+      lessonsRequired: parseInt(body.lessonsRequired || 5),
+      rewardItem: body.rewardItem,
+      isActive: body.isActive !== false
+    }).returning();
+    await invalidateAdminCaches('events');
+    return { success: true, data: inserted };
+  },
+  async updateEvent(request, reply) {
+    const id = parseInt(request.params.id);
+    const body = request.body || {};
+    const [updated] = await db.update(seasonalEvents).set({
+      code: body.code,
+      name: body.name,
+      description: body.description,
+      emoji: body.emoji,
+      themeColor: body.themeColor,
+      startDate: body.startDate ? new Date(body.startDate) : undefined,
+      endDate: body.endDate ? new Date(body.endDate) : undefined,
+      lessonsRequired: body.lessonsRequired !== undefined ? parseInt(body.lessonsRequired) : undefined,
+      rewardItem: body.rewardItem,
+      isActive: body.isActive
+    }).where(eq(seasonalEvents.id, id)).returning();
+    await invalidateAdminCaches('events');
+    return { success: true, data: updated };
+  },
+  async deleteEvent(request, reply) {
+    const id = parseInt(request.params.id);
+    await db.delete(seasonalEvents).where(eq(seasonalEvents.id, id));
+    await invalidateAdminCaches('events');
+    return { success: true, message: 'Event deleted.' };
+  },
+
+  // ─── AVATAR ITEMS CRUD ───────────────────────────────────────────────────────
+  async getAvatarItems(request, reply) {
+    const list = await db.select().from(avatarItems);
+    return { success: true, data: list };
+  },
+  async createAvatarItem(request, reply) {
+    const body = request.body || {};
+    const [inserted] = await db.insert(avatarItems).values({
+      code: body.code,
+      name: body.name,
+      category: body.category,
+      imageUrl: body.imageUrl,
+      emoji: body.emoji || '🤠',
+      rarity: body.rarity || 'common',
+      unlockCondition: body.unlockCondition,
+      unlockType: body.unlockType || 'achievement',
+      coinCost: parseInt(body.coinCost || 0),
+      isDefault: body.isDefault === true,
+      sortOrder: parseInt(body.sortOrder || 0)
+    }).returning();
+    await invalidateAdminCaches('avatar-items');
+    return { success: true, data: inserted };
+  },
+  async updateAvatarItem(request, reply) {
+    const id = parseInt(request.params.id);
+    const body = request.body || {};
+    const [updated] = await db.update(avatarItems).set({
+      code: body.code,
+      name: body.name,
+      category: body.category,
+      imageUrl: body.imageUrl,
+      emoji: body.emoji,
+      rarity: body.rarity,
+      unlockCondition: body.unlockCondition,
+      unlockType: body.unlockType,
+      coinCost: body.coinCost !== undefined ? parseInt(body.coinCost) : undefined,
+      isDefault: body.isDefault,
+      sortOrder: body.sortOrder !== undefined ? parseInt(body.sortOrder) : undefined
+    }).where(eq(avatarItems.id, id)).returning();
+    await invalidateAdminCaches('avatar-items');
+    return { success: true, data: updated };
+  },
+  async deleteAvatarItem(request, reply) {
+    const id = parseInt(request.params.id);
+    await db.delete(avatarItems).where(eq(avatarItems.id, id));
+    await invalidateAdminCaches('avatar-items');
+    return { success: true, message: 'Avatar item deleted.' };
   }
 };

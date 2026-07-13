@@ -6,6 +6,7 @@ import * as z from 'zod';
 import { Settings, ShieldAlert, CheckCircle2, AlertCircle } from 'lucide-react';
 import axiosClient from '../api/axiosClient.js';
 import { useAuthStore } from '../stores/authStore.js';
+import { useThemeStore } from '../stores/themeStore.js';
 import sound from '../components/SoundEngine.js';
 
 // Schema for updating settings
@@ -49,6 +50,28 @@ export default function SettingsPage() {
     sound.playClick();
     setFeedback(null);
     settingsMutation.mutate(data);
+  };
+
+  const { colorTheme, setColorTheme, bgAnimation, setBgAnimation } = useThemeStore();
+
+  const themesList = [
+    { code: 'default', name: 'Default Pink', color: '#ec4899', border: '#fda4af' },
+    { code: 'violet', name: 'Violet', color: '#8b5cf6', border: '#c4b5fd' },
+    { code: 'midnight', name: 'Midnight', color: '#6366f1', border: '#a5b4fc' },
+    { code: 'sakura', name: 'Sakura Sakura', color: '#f472b6', border: '#fbcfe8' },
+    { code: 'ocean', name: 'Ocean Cyan', color: '#06b6d4', border: '#67e8f9' },
+    { code: 'emerald', name: 'Emerald Green', color: '#10b981', border: '#6ee7b7' },
+    { code: 'cyberpunk', name: 'Cyber Amber', color: '#f59e0b', border: '#fcd34d' },
+  ];
+
+  const handleThemeChange = (themeCode) => {
+    sound.playClick();
+    setColorTheme(themeCode);
+  };
+
+  const handleBgChange = (bgName) => {
+    sound.playClick();
+    setBgAnimation(bgName);
   };
 
   return (
@@ -128,6 +151,67 @@ export default function SettingsPage() {
             <span>{settingsMutation.isPending ? 'Saving Preferences...' : 'Save Settings'}</span>
           </button>
         </form>
+      </div>
+
+      {/* Theme Customization Card */}
+      <div className="p-8 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium space-y-6">
+        <div>
+          <h3 className="text-lg font-heading font-bold text-zinc-900 dark:text-zinc-50">App Customization</h3>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Unlock new looks by achieving learning milestones.</p>
+        </div>
+
+        {/* Color Theme Selector */}
+        <div className="space-y-3">
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Color Theme</label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {themesList.map((t) => {
+              const isSelected = colorTheme === t.code;
+              return (
+                <button
+                  key={t.code}
+                  type="button"
+                  onClick={() => handleThemeChange(t.code)}
+                  className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-2 transition-all hover:scale-102 ${
+                    isSelected 
+                      ? 'border-pink-500/60 bg-pink-500/5 font-bold shadow-md' 
+                      : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/20 hover:border-pink-300'
+                  }`}
+                >
+                  <span className="w-8 h-8 rounded-full border flex items-center justify-center" style={{ backgroundColor: t.color, borderColor: t.border }} />
+                  <span className="text-xs text-zinc-700 dark:text-zinc-300">{t.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Background Animations */}
+        <div className="space-y-3 pt-4 border-t border-zinc-150 dark:border-zinc-800/40">
+          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Animated Backgrounds</label>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { code: 'none', name: 'None/Static' },
+              { code: 'stars', name: '🌠 Stars Twinkle' },
+              { code: 'aurora', name: '🌌 Aurora Waves' },
+            ].map((bgOption) => {
+              const isSelected = bgAnimation === bgOption.code;
+              return (
+                <button
+                  key={bgOption.code}
+                  type="button"
+                  onClick={() => handleBgChange(bgOption.code)}
+                  className={`px-4 py-2.5 rounded-xl border text-xs font-semibold transition-all ${
+                    isSelected
+                      ? 'border-pink-500 bg-pink-500/10 text-pink-600 dark:text-pink-400 font-bold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/20 text-zinc-600 dark:text-zinc-300 hover:border-pink-300'
+                  }`}
+                >
+                  {bgOption.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
     </div>

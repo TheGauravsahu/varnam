@@ -126,3 +126,239 @@ body {
 .pulsing-glow {
   animation: pulse-glow 6s ease-in-out infinite;
 }
+
+/* ===== THEME SYSTEM ===== */
+/* Default theme = pink/rose (already in app) */
+
+[data-theme="violet"] {
+  --theme-primary: #8b5cf6;
+  --theme-primary-hover: #7c3aed;
+  --theme-primary-glow: rgba(139, 92, 246, 0.35);
+  --theme-accent: #a78bfa;
+  --color-pink-50: #f5f3ff;
+  --color-pink-100: #ede9fe;
+  --color-pink-200: #ddd6fe;
+  --color-pink-300: #c4b5fd;
+  --color-pink-400: #a78bfa;
+  --color-pink-500: #8b5cf6;
+  --color-pink-600: #7c3aed;
+  --color-pink-650: #6d28d9;
+}
+[data-theme="midnight"] {
+  --theme-primary: #6366f1;
+  --theme-primary-hover: #4f46e5;
+  --theme-primary-glow: rgba(99, 102, 241, 0.35);
+  --theme-accent: #818cf8;
+  --color-pink-50: #eef2ff;
+  --color-pink-100: #e0e7ff;
+  --color-pink-200: #c7d2fe;
+  --color-pink-300: #a5b4fc;
+  --color-pink-400: #818cf8;
+  --color-pink-500: #6366f1;
+  --color-pink-600: #4f46e5;
+  --color-pink-650: #4338ca;
+}
+[data-theme="sakura"] {
+  --theme-primary: #f472b6;
+  --theme-primary-hover: #ec4899;
+  --theme-primary-glow: rgba(244, 114, 182, 0.35);
+  --theme-accent: #fbcfe8;
+  --color-pink-50: #fff1f2;
+  --color-pink-100: #ffe4e6;
+  --color-pink-200: #fecdd3;
+  --color-pink-300: #fda4af;
+  --color-pink-400: #fb7185;
+  --color-pink-500: #f43f5e;
+  --color-pink-600: #e11d48;
+  --color-pink-650: #be123c;
+}
+[data-theme="ocean"] {
+  --theme-primary: #06b6d4;
+  --theme-primary-hover: #0891b2;
+  --theme-primary-glow: rgba(6, 182, 212, 0.35);
+  --theme-accent: #67e8f9;
+  --color-pink-50: #ecfeff;
+  --color-pink-100: #cffafe;
+  --color-pink-200: #a5f3fc;
+  --color-pink-300: #67e8f9;
+  --color-pink-400: #22d3ee;
+  --color-pink-500: #06b6d4;
+  --color-pink-600: #0891b2;
+  --color-pink-650: #0369a1;
+}
+[data-theme="emerald"] {
+  --theme-primary: #10b981;
+  --theme-primary-hover: #059669;
+  --theme-primary-glow: rgba(16, 185, 129, 0.35);
+  --theme-accent: #6ee7b7;
+  --color-pink-50: #ecfdf5;
+  --color-pink-100: #d1fae5;
+  --color-pink-200: #a7f3d0;
+  --color-pink-300: #6ee7b7;
+  --color-pink-400: #34d399;
+  --color-pink-500: #10b981;
+  --color-pink-600: #059669;
+  --color-pink-650: #047857;
+}
+[data-theme="cyberpunk"] {
+  --theme-primary: #f59e0b;
+  --theme-primary-hover: #d97706;
+  --theme-primary-glow: rgba(245, 158, 11, 0.45);
+  --theme-accent: #fcd34d;
+  --color-pink-50: #fffbeb;
+  --color-pink-100: #fef3c7;
+  --color-pink-200: #fde68a;
+  --color-pink-300: #fcd34d;
+  --color-pink-400: #fbbf24;
+  --color-pink-500: #f59e0b;
+  --color-pink-600: #d97706;
+  --color-pink-650: #b45309;
+}
+
+/* Themed button variants */
+[data-theme] .btn-themed {
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-hover) 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme] .btn-themed:hover {
+  box-shadow: 0 10px 25px var(--theme-primary-glow);
+  transform: translateY(-1px);
+}
+
+/* Animated Backgrounds */
+@keyframes rain-fall {
+  0% { transform: translateY(-100vh); opacity: 0.7; }
+  100% { transform: translateY(100vh); opacity: 0.3; }
+}
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+@keyframes aurora-wave {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes firefly-float {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+  25% { transform: translate(10px, -20px) scale(1.2); opacity: 1; }
+  50% { transform: translate(-5px, -35px) scale(0.9); opacity: 0.6; }
+  75% { transform: translate(15px, -15px) scale(1.1); opacity: 0.9; }
+}
+@keyframes particle-drift {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
+
+.animated-bg-stars {
+  background: radial-gradient(ellipse at bottom, #0f172a 0%, #020617 100%);
+}
+.animated-bg-aurora {
+  background: linear-gradient(270deg, #0ea5e9, #8b5cf6, #06b6d4, #10b981);
+  background-size: 400% 400%;
+  animation: aurora-wave 8s ease infinite;
+}
+
+/* Combo system */
+@keyframes combo-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.combo-indicator {
+  animation: combo-pulse 0.5s ease-in-out infinite;
+}
+
+/* Streak card share */
+.streak-card-gradient {
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 50%, #ec4899 100%);
+}
+
+/* Flashcard swipe */
+@keyframes swipe-right {
+  to { transform: translateX(150%) rotate(20deg); opacity: 0; }
+}
+@keyframes swipe-left {
+  to { transform: translateX(-150%) rotate(-20deg); opacity: 0; }
+}
+.swipe-exit-right { animation: swipe-right 0.3s ease-out forwards; }
+.swipe-exit-left { animation: swipe-left 0.3s ease-out forwards; }
+
+/* Crown animation for perfect lesson */
+@keyframes crown-drop {
+  0% { transform: translateY(-50px) rotate(-10deg); opacity: 0; }
+  60% { transform: translateY(5px) rotate(3deg); opacity: 1; }
+  80% { transform: translateY(-3px) rotate(-1deg); }
+  100% { transform: translateY(0) rotate(0); opacity: 1; }
+}
+.crown-animate { animation: crown-drop 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* Chest open animation */
+@keyframes chest-bounce {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg) scale(1.05); }
+  75% { transform: rotate(5deg) scale(1.05); }
+}
+.chest-shake { animation: chest-bounce 0.4s ease-in-out; }
+
+/* XP Multiplier badge */
+.xp-multiplier {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a1a;
+  font-weight: 800;
+  border-radius: 9999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+}
+
+/* Confetti burst for spin wheel */
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  animation: confetti-fall 1.2s ease-out forwards;
+}
+
+/* Card flip animation for flashcards */
+.flashcard-inner {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flashcard-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flashcard-front,
+.flashcard-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+/* Avatar idle float */
+@keyframes avatar-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.avatar-float {
+  animation: avatar-float 3s ease-in-out infinite;
+}
+
+/* Sidebar scrollbar hiding classes */
+.sidebar-scrollable {
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.sidebar-scrollable::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+

@@ -10,13 +10,16 @@ import {
   Users, 
   ArrowRight,
   ShieldAlert,
-  LayoutDashboard
+  LayoutDashboard,
+  Gamepad2
 } from 'lucide-react';
 import axiosClient from '../../api/axiosClient.js';
 import sound from '../../components/SoundEngine.js';
+import { useConfirmStore } from '../../stores/confirmStore.js';
 
 export default function AdminDashboardPage() {
   const queryClient = useQueryClient();
+  const confirm = useConfirmStore(state => state.confirm);
   const [feedback, setFeedback] = useState(null);
 
   // Fetch Counts/Stats
@@ -54,9 +57,15 @@ export default function AdminDashboardPage() {
     }
   });
 
-  const triggerSeed = (track = 'all') => {
+  const triggerSeed = async (track = 'all') => {
     sound.playClick();
-    if (window.confirm(`Seed database with the ${track === 'all' ? 'default Spanish & English' : track} coursework curriculum?`)) {
+    const ok = await confirm({
+      title: 'Seed Coursework?',
+      message: `Are you sure you want to seed the database with the ${track === 'all' ? 'default Spanish & English' : track} coursework curriculum?`,
+      confirmText: 'Seed Database',
+      cancelText: 'Cancel'
+    });
+    if (ok) {
       seedMutation.mutate(track);
     }
   };
@@ -109,6 +118,14 @@ export default function AdminDashboardPage() {
       icon: Users,
       count: stats.users,
       color: 'text-rose-500 bg-rose-500/10'
+    },
+    {
+      name: 'Gamification Configs',
+      path: '/admin/gamification',
+      description: 'Configure Daily Quests, Weekly Missions, Seasonal Events, and Avatar builder items.',
+      icon: Gamepad2,
+      count: '4 sections',
+      color: 'text-violet-500 bg-violet-550/10'
     }
   ];
 

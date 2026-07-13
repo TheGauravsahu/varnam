@@ -16,11 +16,106 @@ import {
 import gsap from 'gsap';
 import axiosClient from '../api/axiosClient.js';
 import sound from '../components/SoundEngine.js';
+import { useConfirmStore } from '../stores/confirmStore.js';
+import { useAuthStore } from '../stores/authStore.js';
+import Loader from '../components/Loader.jsx';
+
+const HINDI_TRANSLATIONS = {
+  // Instructions
+  'Translate this greeting': 'इस अभिवादन का अनुवाद करें',
+  'True or False': 'सही या गलत',
+  'Fill in the blank to say "See you later"': '"See you later" (फिर मिलते हैं) कहने के लिए खाली स्थान भरें',
+  'Match the greetings': 'अभिवादनों का मिलान करें',
+  'Select the best response for: "How are you?"': '"How are you?" (आप कैसे हैं?) के लिए सबसे अच्छा उत्तर चुनें',
+  'Complete the statement: "I am fine"': 'कथन पूरा करें: "I am fine" (मैं ठीक हूँ)',
+  'Is this response polite?': 'क्या यह उत्तर विनम्र है?',
+  'Translate this order': 'इस ऑर्डर का अनुवाद करें',
+  'Complete the request': 'अनुरोध पूरा करें',
+  'Complete the self-introduction: "My name is..."': 'आत्म-परिचय पूरा करें: "My name is..." (मेरा नाम है...)',
+  'Match the pairs correctly': 'जोड़ों का सही मिलान करें',
+  'Select the correct translation': 'सही अनुवाद चुनें',
+  'Translate: "Nice to meet you"': 'अनुवाद करें: "Nice to meet you" (आपसे मिलकर अच्छा लगा)',
+  'Is this statement correct?': 'क्या यह कथन सही है?',
+  
+  // Questions / Prompts
+  'Hello': 'नमस्ते (Hello)',
+  'Goodbye': 'अलविदा (Goodbye)',
+  'Thanks': 'धन्यवाद (Thanks)',
+  'Please': 'कृपया (Please)',
+  'How are you?': 'आप कैसे हैं? (How are you?)',
+  'Nice to meet you': 'आपसे मिलकर खुशी हुई (Nice to meet you)',
+  'I would like a coffee, please.': 'मुझे एक कॉफ़ी चाहिए, कृपया। (I would like a coffee, please.)',
+  'Could I have a glass of water?': 'क्या मुझे एक गिलास पानी मिल सकता है? (Could I have a glass of water?)',
+  'Answering "I am fine, and you?" is standard conversational etiquette.': '"I am fine, and you?" (मैं ठीक हूँ, और आप?) उत्तर देना बातचीत का मानक शिष्टाचार है।',
+  '"Goodbye" is a formal way to say goodbye.': '"Goodbye" अलविदा कहने का एक औपचारिक तरीका है।',
+  'Match words': 'शब्दों का मिलान करें',
+  'Match gratitude pairs': 'आभार के जोड़ों का मिलान करें',
+  'Match greetings': 'अभिवादनों का मिलान करें',
+  'See you ______': 'फिर ______ (See you ______)',
+  'I ______ fine, thanks.': 'मैं ठीक ______, धन्यवाद। (I ______ fine, thanks.)',
+  'Me ______ Carlos': 'मेरा नाम ______ कार्लोस है। (Me ______ Carlos)',
+
+  // Match options / Choices
+  'Hola': 'नमस्ते (Hola)',
+  'Adiós': 'अलविदा (Adiós)',
+  'Gracias': 'धन्यवाद (Gracias)',
+  'Buenos días': 'शुभ प्रभात (Buenos días)',
+  'De nada': 'कोई बात नहीं (De nada)',
+  'Mucho gusto': 'आपसे मिलकर अच्छा लगा (Mucho gusto)',
+  'Me llamo Juan': 'मेरा नाम जुआन है (Me llamo Juan)',
+  'Buenas noches': 'शुभरात्रि (Buenas noches)',
+  'How are you?': 'आप कैसे हैं? (How are you?)',
+  'I am doing well, thank you!': 'मैं ठीक हूँ, धन्यवाद! (I am doing well, thank you!)',
+  'I live in London.': 'मैं लंदन में रहता हूँ। (I live in London.)',
+  'My name is Bob.': 'मेरा नाम बॉब है। (My name is Bob.)',
+  'Goodbye.': 'अलविदा। (Goodbye.)',
+  'A coffee, please.': 'एक कॉफ़ी, कृपया। (A coffee, please.)',
+  'A tea, please.': 'एक चाय, कृपया। (A tea, please.)',
+  'No coffee.': 'कॉफ़ी नहीं। (No coffee.)',
+  'Where is coffee?': 'कॉफ़ी कहाँ है? (Where is coffee?)',
+};
+
+const translateExercise = (ex, user) => {
+  if (user?.profile?.nativeLanguage !== 'Hindi') return ex;
+
+  const translateStr = (str) => HINDI_TRANSLATIONS[str] || str;
+
+  // Deep copy exercise to avoid caching bugs
+  const newEx = JSON.parse(JSON.stringify(ex));
+  
+  newEx.instruction = translateStr(newEx.instruction);
+  newEx.questionText = translateStr(newEx.questionText);
+
+  if (newEx.type === 'matching') {
+    const parts = newEx.correctAnswer.split('|').map(pair => {
+      const [left, right] = pair.split(':');
+      return `${translateStr(left)}:${right}`;
+    });
+    newEx.correctAnswer = parts.join('|');
+
+    if (Array.isArray(newEx.choices)) {
+      newEx.choices = newEx.choices.map(choice => ({
+        left: translateStr(choice.left),
+        right: choice.right
+      }));
+    }
+  } else if (Array.isArray(newEx.choices)) {
+    newEx.choices = newEx.choices.map(c => translateStr(c));
+  }
+  
+  if (newEx.type !== 'matching') {
+    newEx.correctAnswer = translateStr(newEx.correctAnswer);
+  }
+
+  return newEx;
+};
 
 export default function LessonPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const confirm = useConfirmStore(state => state.confirm);
+  const { user } = useAuthStore();
 
   // Exercise Engine States
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,6 +123,11 @@ export default function LessonPage() {
   const [answered, setAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
+
+  // Gamification combo & mistakes states
+  const [mistakes, setMistakes] = useState(0);
+  const [comboCount, setComboCount] = useState(0);
+  const [comboActive, setComboActive] = useState(false);
 
   // Matching game states
   const [selectedLeft, setSelectedLeft] = useState(null);
@@ -70,7 +170,12 @@ export default function LessonPage() {
 
   const lesson = data?.lesson;
   const exercises = data?.exercises || [];
-  const currentExercise = exercises[currentIndex];
+  
+  const rawExercise = exercises[currentIndex];
+  const currentExercise = React.useMemo(() => {
+    if (!rawExercise) return null;
+    return translateExercise(rawExercise, user);
+  }, [rawExercise, user]);
 
   // Intercept refresh or page navigation to prevent accidental quits
   useEffect(() => {
@@ -82,9 +187,15 @@ export default function LessonPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, []);
 
-  const handleQuit = () => {
+  const handleQuit = async () => {
     sound.playClick();
-    if (window.confirm('Are you sure you want to quit? Your progress on this lesson will be lost.')) {
+    const ok = await confirm({
+      title: 'Quit Lesson?',
+      message: 'Are you sure you want to quit? Your progress on this lesson will be lost.',
+      confirmText: 'Yes, Quit',
+      cancelText: 'Cancel'
+    });
+    if (ok) {
       navigate('/dashboard');
     }
   };
@@ -103,10 +214,18 @@ export default function LessonPage() {
     if (correctMatch) {
       sound.playCorrect();
       setCorrectCount(prev => prev + 1);
+      setComboCount(prev => {
+        const next = prev + 1;
+        if (next >= 5) setComboActive(true);
+        return next;
+      });
       // Play mini pop animation on success panel
       gsap.fromTo('.success-panel', { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'back.out(1.5)' });
     } else {
       sound.playIncorrect();
+      setMistakes(prev => prev + 1);
+      setComboCount(0);
+      setComboActive(false);
       // Shake the container using GSAP to signal errors
       gsap.fromTo(exerciseContainerRef.current, 
         { x: -10 }, 
@@ -166,9 +285,17 @@ export default function LessonPage() {
         setIsCorrect(true);
         setAnswered(true);
         sound.playCorrect();
+        setComboCount(prev => {
+          const next = prev + 1;
+          if (next >= 5) setComboActive(true);
+          return next;
+        });
       }
     } else {
       sound.playTone(200, 0.15, this?.ctx?.currentTime || 0); // flat buzz tone
+      setMistakes(prev => prev + 1);
+      setComboCount(0);
+      setComboActive(false);
       // Shake choices
       gsap.fromTo('.matching-grid', 
         { x: -5 }, 
@@ -192,10 +319,12 @@ export default function LessonPage() {
     if (currentIndex + 1 < exercises.length) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      // Complete lesson! Send score payload
+      // Complete lesson! Send score + gamification payload
       submitMutation.mutate({
         score: correctCount,
-        total: exercises.length
+        total: exercises.length,
+        perfectLesson: mistakes === 0,
+        comboActive: comboActive
       });
     }
   };
@@ -203,7 +332,7 @@ export default function LessonPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+        <Loader message="Loading exercise content..." />
       </div>
     );
   }
@@ -234,14 +363,22 @@ export default function LessonPage() {
           </button>
 
           {/* Core progress tracker */}
-          <div className="flex-1 max-w-md h-3.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden relative">
+          <div className="flex-grow max-w-md h-3.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden relative">
             <div 
               className="h-full bg-pink-500 rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
 
-          <span className="text-xs font-bold font-number text-zinc-400">
+          {/* Combo indicator badge */}
+          {comboCount >= 5 && (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 font-bold text-xs combo-indicator shrink-0">
+              <span>🔥 {comboCount} Combo</span>
+              <span className="xp-multiplier">1.5x</span>
+            </div>
+          )}
+
+          <span className="text-xs font-bold font-number text-zinc-400 shrink-0">
             {currentIndex + 1} / {exercises.length}
           </span>
         </header>
@@ -437,11 +574,26 @@ export default function LessonPage() {
             
             {/* Header Triumph */}
             <div className="space-y-3">
-              <div className="w-16 h-16 rounded-3xl bg-pink-500/10 border border-pink-500/20 text-pink-500 flex items-center justify-center mx-auto shadow-sm">
-                <Crown className="w-8 h-8 fill-current animate-pulse" />
-              </div>
-              <h2 className="text-3xl font-heading font-bold text-zinc-900 dark:text-zinc-50">Lesson Complete!</h2>
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm">Amazing work! You've successfully finished <strong>{lesson?.title}</strong>.</p>
+              {finishData.perfectLesson ? (
+                <div className="flex flex-col items-center gap-2 py-2">
+                  <div className="text-6xl crown-animate">👑</div>
+                  <h3 className="text-2xl font-heading font-black text-yellow-500 uppercase tracking-wider animate-bounce">
+                    Perfect Lesson!
+                  </h3>
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-3xl bg-pink-500/10 border border-pink-500/20 text-pink-500 flex items-center justify-center mx-auto shadow-sm">
+                  <Crown className="w-8 h-8 fill-current animate-pulse" />
+                </div>
+              )}
+              <h2 className="text-3xl font-heading font-bold text-zinc-900 dark:text-zinc-50">
+                {finishData.perfectLesson ? 'Flawless Victory!' : 'Lesson Complete!'}
+              </h2>
+              <p className="text-zinc-500 dark:text-zinc-400 text-sm">
+                {finishData.perfectLesson 
+                  ? "Awesome! You didn't make a single mistake." 
+                  : `Amazing work! You've successfully finished ${lesson?.title || 'this lesson'}.`}
+              </p>
             </div>
 
             {/* Quick stats grid */}

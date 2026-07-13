@@ -11,6 +11,7 @@ import ConfirmModal from './components/ConfirmModal.jsx';
 
 // Layout shell
 import Layout from './components/Layout.jsx';
+import Loader from './components/Loader.jsx';
 
 // Pages
 import LandingPage from './pages/LandingPage.jsx';
@@ -27,6 +28,17 @@ import LevelsPage from './pages/LevelsPage.jsx';
 import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 
+// Gamification & Spaced Repetition Pages
+import GamificationPage from './pages/GamificationPage.jsx';
+import SpinWheelPage from './pages/SpinWheelPage.jsx';
+import AvatarPage from './pages/AvatarPage.jsx';
+import VocabularyPage from './pages/VocabularyPage.jsx';
+import FlashcardsPage from './pages/FlashcardsPage.jsx';
+import FriendsPage from './pages/FriendsPage.jsx';
+import ClubsPage from './pages/ClubsPage.jsx';
+import StreakSharePage from './pages/StreakSharePage.jsx';
+import ProfileCardPage from './pages/ProfileCardPage.jsx';
+
 // Admin Page Separations
 import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
 import AdminLanguagesPage from './pages/admin/AdminLanguagesPage.jsx';
@@ -35,6 +47,7 @@ import AdminChaptersPage from './pages/admin/AdminChaptersPage.jsx';
 import AdminLessonsPage from './pages/admin/AdminLessonsPage.jsx';
 import AdminExercisesPage from './pages/admin/AdminExercisesPage.jsx';
 import AdminUsersPage from './pages/admin/AdminUsersPage.jsx';
+import AdminGamificationPage from './pages/admin/AdminGamificationPage.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,7 +67,7 @@ function ProtectedRoute({ children }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-950">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+        <Loader message="Checking authentication..." />
       </div>
     );
   }
@@ -69,7 +82,7 @@ function AdminRoute({ children }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-950">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+        <Loader message="Verifying admin credentials..." />
       </div>
     );
   }
@@ -85,7 +98,7 @@ function PublicRoute({ children }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-950">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+        <Loader message="Redirecting..." />
       </div>
     );
   }
@@ -103,7 +116,7 @@ function NavigationWrapper() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-950">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+        <Loader message="Initializing Varnam tracks..." />
       </div>
     );
   }
@@ -125,6 +138,17 @@ function NavigationWrapper() {
       <Route path="/settings" element={<ProtectedRoute><Layout><SettingsPage /></Layout></ProtectedRoute>} />
       <Route path="/about" element={<ProtectedRoute><Layout><AboutPage /></Layout></ProtectedRoute>} />
 
+      {/* Gamification & Spaced Repetition Routes */}
+      <Route path="/gamification" element={<ProtectedRoute><Layout><GamificationPage /></Layout></ProtectedRoute>} />
+      <Route path="/spin" element={<ProtectedRoute><Layout><SpinWheelPage /></Layout></ProtectedRoute>} />
+      <Route path="/avatar" element={<ProtectedRoute><Layout><AvatarPage /></Layout></ProtectedRoute>} />
+      <Route path="/vocabulary" element={<ProtectedRoute><Layout><VocabularyPage /></Layout></ProtectedRoute>} />
+      <Route path="/flashcards" element={<ProtectedRoute><Layout><FlashcardsPage /></Layout></ProtectedRoute>} />
+      <Route path="/friends" element={<ProtectedRoute><Layout><FriendsPage /></Layout></ProtectedRoute>} />
+      <Route path="/clubs" element={<ProtectedRoute><Layout><ClubsPage /></Layout></ProtectedRoute>} />
+      <Route path="/streak-share" element={<ProtectedRoute><Layout><StreakSharePage /></Layout></ProtectedRoute>} />
+      <Route path="/profile-card" element={<ProtectedRoute><Layout><ProfileCardPage /></Layout></ProtectedRoute>} />
+
       {/* Fullscreen Lesson Page (No Sidebar Layout) */}
       <Route path="/lessons/:id" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
 
@@ -136,6 +160,7 @@ function NavigationWrapper() {
       <Route path="/admin/lessons" element={<AdminRoute><Layout><AdminLessonsPage /></Layout></AdminRoute>} />
       <Route path="/admin/exercises" element={<AdminRoute><Layout><AdminExercisesPage /></Layout></AdminRoute>} />
       <Route path="/admin/users" element={<AdminRoute><Layout><AdminUsersPage /></Layout></AdminRoute>} />
+      <Route path="/admin/gamification" element={<AdminRoute><Layout><AdminGamificationPage /></Layout></AdminRoute>} />
 
       {/* Fallback Catch-All to Not Found Page */}
       <Route path="/404" element={<NotFoundPage />} />
