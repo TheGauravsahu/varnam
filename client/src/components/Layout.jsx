@@ -14,7 +14,8 @@ import {
   Compass,
   Menu,
   X,
-  Award
+  Award,
+  SlidersHorizontal
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore.js';
 import sound from './SoundEngine.js';
@@ -59,7 +60,7 @@ export default function Layout({ children }) {
   ];
 
   if (user && user.role === 'admin') {
-    navItems.push({ name: 'Admin Panel', path: '/admin', icon: Crown, isAdmin: true });
+    navItems.push({ name: 'Admin Panel', path: '/admin', icon: SlidersHorizontal, isAdmin: true });
   }
 
   // If user is not logged in, render basic landing layout shell

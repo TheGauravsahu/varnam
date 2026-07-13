@@ -2,6 +2,7 @@ import { lessonRepository } from '../repositories/lessonRepository.js';
 import { progressRepository } from '../repositories/progressRepository.js';
 import { userRepository } from '../repositories/userRepository.js';
 import { calculateLevel } from '../utils/levelCalculator.js';
+import { redisService } from '../services/redisService.js';
 
 export const lessonController = {
   async getLesson(request, reply) {
@@ -88,6 +89,10 @@ export const lessonController = {
 
       // Calculate fresh level stats for real-time progress bar updating
       const freshLevelStats = calculateLevel(updatedProfile?.xpTotal || 0);
+
+      // Clear redis cache blocks
+      await redisService.del(`cache:dashboard:user:${request.user.id}`);
+      await redisService.del('cache:leaderboard');
 
       return {
         success: true,

@@ -7,6 +7,7 @@ import { useAuthStore } from './stores/authStore.js';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import SuspenseBoundary from './components/SuspenseBoundary.jsx';
 import ToastContainer from './components/ToastContainer.jsx';
+import ConfirmModal from './components/ConfirmModal.jsx';
 
 // Layout shell
 import Layout from './components/Layout.jsx';
@@ -21,15 +22,27 @@ import ProfilePage from './pages/ProfilePage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
 import LessonPage from './pages/LessonPage.jsx';
-import AdminPage from './pages/AdminPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import LevelsPage from './pages/LevelsPage.jsx';
+import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
+import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
+
+// Admin Page Separations
+import AdminDashboardPage from './pages/admin/AdminDashboardPage.jsx';
+import AdminLanguagesPage from './pages/admin/AdminLanguagesPage.jsx';
+import AdminUnitsPage from './pages/admin/AdminUnitsPage.jsx';
+import AdminChaptersPage from './pages/admin/AdminChaptersPage.jsx';
+import AdminLessonsPage from './pages/admin/AdminLessonsPage.jsx';
+import AdminExercisesPage from './pages/admin/AdminExercisesPage.jsx';
+import AdminUsersPage from './pages/admin/AdminUsersPage.jsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false, // Prevents aggressive background re-fetches in dev
-      retry: 1
+      retry: 1,
+      staleTime: 5 * 60 * 1000,    // Cache results for 5 minutes
+      gcTime: 10 * 60 * 1000       // Keep cache in memory for 10 minutes
     }
   }
 });
@@ -101,6 +114,8 @@ function NavigationWrapper() {
       <Route path="/" element={<PublicRoute><Layout><LandingPage /></Layout></PublicRoute>} />
       <Route path="/login" element={<PublicRoute><Layout><LoginPage /></Layout></PublicRoute>} />
       <Route path="/signup" element={<PublicRoute><Layout><SignupPage /></Layout></PublicRoute>} />
+      <Route path="/forgot-password" element={<PublicRoute><Layout><ForgotPasswordPage /></Layout></PublicRoute>} />
+      <Route path="/reset-password" element={<PublicRoute><Layout><ResetPasswordPage /></Layout></PublicRoute>} />
 
       {/* Protected Learner Pages */}
       <Route path="/dashboard" element={<ProtectedRoute><Layout><DashboardPage /></Layout></ProtectedRoute>} />
@@ -114,7 +129,13 @@ function NavigationWrapper() {
       <Route path="/lessons/:id" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
 
       {/* Administrative Panel Pages */}
-      <Route path="/admin" element={<AdminRoute><Layout><AdminPage /></Layout></AdminRoute>} />
+      <Route path="/admin" element={<AdminRoute><Layout><AdminDashboardPage /></Layout></AdminRoute>} />
+      <Route path="/admin/languages" element={<AdminRoute><Layout><AdminLanguagesPage /></Layout></AdminRoute>} />
+      <Route path="/admin/units" element={<AdminRoute><Layout><AdminUnitsPage /></Layout></AdminRoute>} />
+      <Route path="/admin/chapters" element={<AdminRoute><Layout><AdminChaptersPage /></Layout></AdminRoute>} />
+      <Route path="/admin/lessons" element={<AdminRoute><Layout><AdminLessonsPage /></Layout></AdminRoute>} />
+      <Route path="/admin/exercises" element={<AdminRoute><Layout><AdminExercisesPage /></Layout></AdminRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><Layout><AdminUsersPage /></Layout></AdminRoute>} />
 
       {/* Fallback Catch-All to Not Found Page */}
       <Route path="/404" element={<NotFoundPage />} />
@@ -132,6 +153,7 @@ export default function App() {
             <NavigationWrapper />
           </Suspense>
           <ToastContainer />
+          <ConfirmModal />
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>

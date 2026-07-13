@@ -1,10 +1,19 @@
 import { lessonRepository } from '../repositories/lessonRepository.js';
 import { progressRepository } from '../repositories/progressRepository.js';
 import { userRepository } from '../repositories/userRepository.js';
+import { redisService } from '../services/redisService.js';
 
 export const dashboardController = {
   async getDashboard(request, reply) {
+    const userId = request.user.id;
+    const cacheKey = `cache:dashboard:user:${userId}`;
     try {
+      // Return cached dashboard data if available
+      const cached = await redisService.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
       const profile = request.user.profile;
       const currentLanguageId = profile?.currentLanguageId || 1;
 
@@ -70,7 +79,7 @@ export const dashboardController = {
       const dailyGoalXp = 50;
       const currentXp = request.user.profile?.xpTotal || 0;
 
-      return {
+      const result = {
         success: true,
         currentLanguage,
         activeLanguages,
@@ -81,6 +90,11 @@ export const dashboardController = {
         dailyGoalXp,
         currentXp
       };
+
+      // Cache user dashboard for 5 minutes
+      await redisService.set(cacheKey, result, 300);
+
+      return result;
     } catch (error) {
       request.log.error('Dashboard REST error:', error);
       reply.status(500).send({ error: 'Internal server error loading dashboard.' });
@@ -88,7 +102,14 @@ export const dashboardController = {
   },
 
   async getLeaderboard(request, reply) {
+    const cacheKey = 'cache:leaderboard';
     try {
+      // Return cached leaderboard list if available
+      const cached = await redisService.get(cacheKey);
+      if (cached) {
+        return cached;
+      }
+
       const leaderboardData = await userRepository.getLeaderboard(10);
       
       // Inject mock competitors to make leagues feel alive in development
@@ -120,10 +141,15 @@ export const dashboardController = {
 
       mergedList.sort((a, b) => b.xpTotal - a.xpTotal);
 
-      return {
+      const result = {
         success: true,
         leaderboard: mergedList
       };
+
+      // Cache leaderboard for 2 minutes
+      await redisService.set(cacheKey, result, 120);
+
+      return result;
     } catch (error) {
       request.log.error('Leaderboard REST error:', error);
       reply.status(500).send({ error: 'Internal server error loading leaderboard.' });
@@ -139,6 +165,8 @@ export const dashboardController = {
 
     try {
       await userRepository.updateProfile(request.user.id, { currentLanguageId: parseInt(languageId) });
+      // Invalidate cached dashboard for this user
+      await redisService.del(`cache:dashboard:user:${request.user.id}`);
       return { success: true, message: 'Language updated successfully.' };
     } catch (error) {
       request.log.error('Language selection error:', error);

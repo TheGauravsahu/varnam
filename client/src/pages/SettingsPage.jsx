@@ -85,12 +85,12 @@ export default function SettingsPage() {
             <select 
               {...register('nativeLanguage')}
               id="nativeLanguage" 
-              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-zinc-50 dark:bg-zinc-950/20 text-sm focus:outline-none focus:border-pink-500"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/20 text-sm focus:outline-none focus:border-pink-500 dark:text-white dark:bg-zinc-900"
             >
-              <option value="Hindi">Hindi (हिन्दी)</option>
-              <option value="English">English</option>
-              <option value="Spanish">Spanish (Español)</option>
-              <option value="Sanskrit">Sanskrit (संस्कृतम्)</option>
+              <option value="Hindi" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Hindi (हिन्दी)</option>
+              <option value="English" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">English</option>
+              <option value="Spanish" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Spanish (Español)</option>
+              <option value="Sanskrit" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Sanskrit (संस्कृतम्)</option>
             </select>
             {errors.nativeLanguage && <p className="text-xs text-red-500">{errors.nativeLanguage.message}</p>}
           </div>
@@ -101,12 +101,12 @@ export default function SettingsPage() {
             <select 
               {...register('currentLeague')}
               id="currentLeague" 
-              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-850 bg-zinc-50 dark:bg-zinc-950/20 text-sm focus:outline-none focus:border-pink-500"
+              className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/20 text-sm focus:outline-none focus:border-pink-500 dark:text-white dark:bg-zinc-900"
             >
-              <option value="Bronze">Bronze League</option>
-              <option value="Silver">Silver League</option>
-              <option value="Gold">Gold League</option>
-              <option value="Diamond">Diamond League</option>
+              <option value="Bronze" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Bronze League</option>
+              <option value="Silver" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Silver League</option>
+              <option value="Gold" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Gold League</option>
+              <option value="Diamond" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">Diamond League</option>
             </select>
             {errors.currentLeague && <p className="text-xs text-red-500">{errors.currentLeague.message}</p>}
           </div>

@@ -13,7 +13,9 @@ export const units = [
   { id: 2, languageId: 1, number: 2, title: 'Conversational Basics', description: 'Talk about your background, family, foods, and make requests.' },
   // English Track (Unit 3)
   { id: 3, languageId: 2, number: 1, title: 'Foundation English', description: 'Master basic conversational greetings, self-introductions, and social etiquette.' },
-  { id: 4, languageId: 2, number: 2, title: 'Intermediate Communication', description: 'Learn professional office communication, hobby discussion, and social planning.' }
+  { id: 4, languageId: 2, number: 2, title: 'Intermediate Communication', description: 'Learn professional office communication, hobby discussion, and social planning.' },
+  // Hindi Track (Unit 5)
+  { id: 5, languageId: 3, number: 1, title: 'Introduction to Hindi', description: 'Master Devanagari script basics, polite greetings, and everyday phrases.' }
 ];
 
 export const chapters = [
@@ -30,7 +32,11 @@ export const chapters = [
   
   // English Chapters (Unit 4)
   { id: 7, unitId: 4, number: 1, title: 'Professional & Work English', description: 'Conduct introductions, coordinate meetings, and write business queries.' },
-  { id: 8, unitId: 4, number: 2, title: 'Leisure & Hobbies', description: 'Chat about weekend projects, invite friends, and share hobbies.' }
+  { id: 8, unitId: 4, number: 2, title: 'Leisure & Hobbies', description: 'Chat about weekend projects, invite friends, and share hobbies.' },
+
+  // Hindi Chapters (Unit 5)
+  { id: 9, unitId: 5, number: 1, title: 'Hindi Varnamala & Salutations', description: 'Pronounce vowels and greet peers politely with Namaste.' },
+  { id: 10, unitId: 5, number: 2, title: 'Daily Conversational Needs', description: 'Request help, state requirements, and express gratitude.' }
 ];
 
 export const lessons = [
@@ -52,7 +58,13 @@ export const lessons = [
   { id: 10, chapterId: 7, number: 1, title: 'Introducing Yourself at Work', xpReward: 20 },
   { id: 11, chapterId: 7, number: 2, title: 'Setting up a Meeting', xpReward: 20 },
   { id: 12, chapterId: 8, number: 1, title: 'Talking about Weekend Plans', xpReward: 25 },
-  { id: 13, chapterId: 8, number: 2, title: 'Inviting Friends', xpReward: 25 }
+  { id: 13, chapterId: 8, number: 2, title: 'Inviting Friends', xpReward: 25 },
+
+  // Hindi Lessons
+  { id: 14, chapterId: 9, number: 1, title: 'Greeting with Namaste', xpReward: 15 },
+  { id: 15, chapterId: 9, number: 2, title: 'Devanagari Vowels', xpReward: 15 },
+  { id: 16, chapterId: 10, number: 1, title: 'Saying Dhanyavaad', xpReward: 20 },
+  { id: 17, chapterId: 10, number: 2, title: 'Asking for Help', xpReward: 20 }
 ];
 
 export const exercises = [
@@ -457,6 +469,118 @@ export const exercises = [
     questionText: 'That sounds ______! I will be there.',
     correctAnswer: 'wonderful',
     choices: ['wonderful', 'bad', 'hard'],
+    order: 2
+  },
+
+  // Hindi Lesson 14: Greeting with Namaste
+  {
+    id: 37,
+    lessonId: 14,
+    type: 'multiple_choice',
+    instruction: 'Devanagari Salutation Translation',
+    questionText: 'Namaste',
+    correctAnswer: 'Hello',
+    choices: ['Hello', 'Goodbye', 'Thanks', 'Sorry'],
+    order: 1
+  },
+  {
+    id: 38,
+    lessonId: 14,
+    type: 'fill_blank',
+    instruction: 'Complete the greeting',
+    questionText: '______ aap kaise hain?',
+    correctAnswer: 'Namaste',
+    choices: ['Namaste', 'Dhanyavaad', 'Alvida'],
+    order: 2
+  },
+  {
+    id: 39,
+    lessonId: 14,
+    type: 'true_false',
+    instruction: 'True or False',
+    questionText: '"Namaste" is accompanied by folding hands in front of the chest.',
+    correctAnswer: 'true',
+    choices: ['true', 'false'],
+    order: 3
+  },
+
+  // Hindi Lesson 15: Devanagari Vowels
+  {
+    id: 40,
+    lessonId: 15,
+    type: 'multiple_choice',
+    instruction: 'Identify the vowel sound',
+    questionText: 'अ (a)',
+    correctAnswer: 'Short A sound',
+    choices: ['Short A sound', 'Long AA sound', 'EE sound', 'OO sound'],
+    order: 1
+  },
+  {
+    id: 41,
+    lessonId: 15,
+    type: 'fill_blank',
+    instruction: 'Identify the vowel',
+    questionText: 'The vowel sound in "Namaste" starts with ______',
+    correctAnswer: 'अ',
+    choices: ['अ', 'इ', 'उ'],
+    order: 2
+  },
+
+  // Hindi Lesson 16: Saying Dhanyavaad
+  {
+    id: 42,
+    lessonId: 16,
+    type: 'multiple_choice',
+    instruction: 'Select the translation for Thank you',
+    questionText: 'Dhanyavaad',
+    correctAnswer: 'Thank you',
+    choices: ['Thank you', 'Please', 'Excuse me', 'Goodbye'],
+    order: 1
+  },
+  {
+    id: 43,
+    lessonId: 16,
+    type: 'fill_blank',
+    instruction: 'Fill in the blank for gratitude',
+    questionText: 'Bahut ______',
+    correctAnswer: 'dhanyavaad',
+    choices: ['dhanyavaad', 'shukriya', 'kripya'],
+    order: 2
+  },
+  {
+    id: 44,
+    lessonId: 16,
+    type: 'matching',
+    instruction: 'Match gratitude pairs',
+    questionText: 'Match terms',
+    correctAnswer: 'Dhanyavaad:Thank you|Kripya:Please|Alvida:Goodbye',
+    choices: [
+      { left: 'Dhanyavaad', right: 'Please' },
+      { left: 'Kripya', right: 'Goodbye' },
+      { left: 'Alvida', right: 'Thank you' }
+    ],
+    order: 3
+  },
+
+  // Hindi Lesson 17: Asking for Help
+  {
+    id: 45,
+    lessonId: 17,
+    type: 'multiple_choice',
+    instruction: 'Translate: "Help me"',
+    questionText: 'Meri madad karo.',
+    correctAnswer: 'Help me.',
+    choices: ['Help me.', 'Where are you?', 'Who is it?', 'Come here.'],
+    order: 1
+  },
+  {
+    id: 46,
+    lessonId: 17,
+    type: 'fill_blank',
+    instruction: 'Fill in the blank for request',
+    questionText: 'Kripya meri ______ kijiye.',
+    correctAnswer: 'madad',
+    choices: ['madad', 'dhanyavaad', 'alvida'],
     order: 2
   }
 ];

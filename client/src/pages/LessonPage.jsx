@@ -433,7 +433,7 @@ export default function LessonPage() {
           {/* Confetti decoration */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pink-500/10 via-rose-500/5 to-transparent pointer-events-none -z-10" />
 
-          <div className="w-full max-w-lg p-8 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-905 shadow-premium text-center space-y-8">
+          <div className="w-full max-w-lg p-8 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium text-center space-y-8">
             
             {/* Header Triumph */}
             <div className="space-y-3">
@@ -446,17 +446,17 @@ export default function LessonPage() {
 
             {/* Quick stats grid */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-850 bg-zinc-50/50 dark:bg-zinc-950/20">
+              <div className="p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-50/50 dark:bg-zinc-950/20">
                 <Zap className="w-5 h-5 text-pink-600 dark:text-pink-400 mx-auto mb-1" />
                 <span className="text-[10px] font-bold text-zinc-400 uppercase block tracking-wider">XP Gained</span>
                 <span className="text-base font-bold font-number text-pink-600 dark:text-pink-400">+{finishData.xpEarned} XP</span>
               </div>
-              <div className="p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-850 bg-zinc-50/50 dark:bg-zinc-950/20">
+              <div className="p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-50/50 dark:bg-zinc-950/20">
                 <Coins className="w-5 h-5 text-yellow-500 mx-auto mb-1" />
                 <span className="text-[10px] font-bold text-zinc-400 uppercase block tracking-wider">Coins</span>
                 <span className="text-base font-bold font-number text-yellow-500">+{finishData.coinsEarned}</span>
               </div>
-              <div className="p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-850 bg-zinc-50/50 dark:bg-zinc-950/20">
+              <div className="p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-50/50 dark:bg-zinc-950/20">
                 <Flame className="w-5 h-5 text-orange-500 mx-auto mb-1 fill-current" />
                 <span className="text-[10px] font-bold text-zinc-400 uppercase block tracking-wider">Streak</span>
                 <span className="text-base font-bold font-number text-orange-500">{finishData.profile?.streakCount} days</span>

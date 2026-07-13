@@ -99,7 +99,7 @@ export default function LoginPage() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Password</label>
-              <a href="#" className="text-xs font-semibold text-pink-600 dark:text-pink-400 hover:underline">Forgot password?</a>
+              <Link to="/forgot-password" onClick={() => sound.playClick()} className="text-xs font-semibold text-pink-600 dark:text-pink-400 hover:underline">Forgot password?</Link>
             </div>
             <div className="relative">
               <input 

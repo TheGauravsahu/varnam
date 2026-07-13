@@ -333,9 +333,9 @@ export default function DashboardPage() {
         {/* Right Column: Dynamic Sidebars */}
         <div className="space-y-8">
           {/* Level Progression Card */}
-          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-xl shadow-premium space-y-4">
+          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white/70 dark:bg-zinc-900/60 backdrop-blur-xl shadow-premium space-y-4 group hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] transition-all duration-300">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-500 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-500 shrink-0 group-hover:bg-pink-500/25 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors duration-300">
                 <Crown className="w-6 h-6 fill-current" />
               </div>
               <div>
@@ -365,8 +365,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Daily XP Goal Card */}
-          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium flex flex-col items-center text-center space-y-4">
-            <h3 className="font-heading font-semibold text-base">
+          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium flex flex-col items-center text-center space-y-4 group hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] transition-all duration-300">
+            <h3 className="font-heading font-semibold text-base group-hover:text-pink-500 transition-colors duration-300">
               Daily Goal Progress
             </h3>
 
@@ -392,12 +392,12 @@ export default function DashboardPage() {
           </div>
 
           {/* Activity Heatmap Grid */}
-          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium space-y-4">
+          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium space-y-4 group hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] transition-all duration-300">
             <div className="flex items-center justify-between">
-              <h3 className="font-heading font-semibold text-base">
+              <h3 className="font-heading font-semibold text-base group-hover:text-pink-500 transition-colors duration-300">
                 Activity Heatmap
               </h3>
-              <Calendar className="w-4 h-4 text-zinc-400" />
+              <Calendar className="w-4 h-4 text-zinc-400 group-hover:text-pink-500 transition-colors duration-305" />
             </div>
 
             <div className="grid grid-cols-7 gap-1.5 w-full">
@@ -420,8 +420,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Unlocked Achievements list */}
-          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium space-y-4">
-            <h3 className="font-heading font-semibold text-base">
+          <div className="p-6 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/50 bg-white dark:bg-zinc-900 shadow-premium space-y-4 group hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] transition-all duration-300">
+            <h3 className="font-heading font-semibold text-base group-hover:text-pink-500 transition-colors duration-300">
               Unlocked Achievements
             </h3>
 
@@ -437,10 +437,9 @@ export default function DashboardPage() {
                 {achievements.map((ua) => (
                   <div
                     key={ua.id}
-                    className="flex flex-col items-center justify-center p-3 rounded-2xl border border-pink-500/20 bg-pink-500/5 text-pink-500 text-center relative group cursor-pointer"
+                    className="flex flex-col items-center justify-center p-3 rounded-2xl border border-pink-500/20 bg-pink-500/5 text-pink-500 text-center relative cursor-pointer hover:bg-pink-500/10 transition-colors duration-300"
                     title={`${ua.achievement.title}: ${ua.achievement.description}`}
                   >
-                    {/* Placeholder icon rendering based on standard codes */}
                     <Award className="w-6 h-6 mb-1" />
                     <span className="text-[9px] font-bold truncate max-w-full">
                       {ua.achievement.title}
