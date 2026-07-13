@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Trophy, Medal, Flame } from 'lucide-react';
 import axiosClient from '../api/axiosClient.js';
 import { useAuthStore } from '../stores/authStore.js';
+import Loader from '../components/Loader.jsx';
 
 export default function LeaderboardPage() {
   const { user } = useAuthStore();
@@ -18,8 +19,8 @@ export default function LeaderboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+      <div className="flex items-center justify-center min-h-[70vh] w-full">
+        <Loader message="Loading leaderboard rankings..." />
       </div>
     );
   }

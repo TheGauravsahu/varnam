@@ -20,6 +20,7 @@ import axiosClient from "../api/axiosClient.js";
 import sound from "../components/SoundEngine.js";
 import Modal from "../components/Modal.jsx";
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader.jsx";
 
 export default function DashboardPage() {
   const queryClient = useQueryClient();
@@ -75,8 +76,8 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+      <div className="flex items-center justify-center min-h-[70vh] w-full">
+        <Loader message="Loading dashboard..." />
       </div>
     );
   }
@@ -396,12 +397,14 @@ export default function DashboardPage() {
                 <p className="text-xs text-zinc-450 dark:text-zinc-500 text-center py-2">No quests active for today.</p>
               ) : (
                 quests.slice(0, 3).map((quest) => {
-                  const progressPct = Math.min(100, Math.floor(((quest.progress || 0) / quest.targetCount) * 100));
+                  const questDef = quest.quest || {};
+                  const targetCount = questDef.targetCount || 1;
+                  const progressPct = Math.min(100, Math.floor(((quest.progress || 0) / targetCount) * 100));
                   return (
                     <div key={quest.id} className="space-y-1.5">
                       <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                        <span>{quest.title}</span>
-                        <span className="font-number">{quest.progress || 0} / {quest.targetCount}</span>
+                        <span>{questDef.title || quest.title}</span>
+                        <span className="font-number">{quest.progress || 0} / {targetCount}</span>
                       </div>
                       <div className="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
                         <div 

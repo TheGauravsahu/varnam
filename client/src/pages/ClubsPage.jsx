@@ -7,6 +7,7 @@ import axiosClient from '../api/axiosClient.js';
 import { useAuthStore } from '../stores/authStore.js';
 import { useToastStore } from '../stores/toastStore.js';
 import sound from '../components/SoundEngine.js';
+import Loader from '../components/Loader.jsx';
 
 export default function ClubsPage() {
   const queryClient = useQueryClient();
@@ -148,9 +149,7 @@ export default function ClubsPage() {
 
       {/* Clubs Grid */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-pink-500" />
-        </div>
+        <Loader message="Loading language clubs..." />
       ) : filteredClubs.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-zinc-900/40 rounded-3xl border border-dashed border-zinc-200/40 dark:border-zinc-800/50">
           <Building2 className="w-12 h-12 text-zinc-350 dark:text-zinc-700 mx-auto mb-3" />
@@ -250,9 +249,7 @@ export default function ClubsPage() {
                 </h4>
 
                 {isLoadingDetails ? (
-                  <div className="flex justify-center py-6">
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-pink-500" />
-                  </div>
+                  <Loader message="Loading club leaderboard..." />
                 ) : !selectedClubDetails?.members || selectedClubDetails.members.length === 0 ? (
                   <p className="text-xs text-zinc-500 text-center">No members listed.</p>
                 ) : (

@@ -6,6 +6,7 @@ import axiosClient from '../api/axiosClient.js';
 import { useAuthStore } from '../stores/authStore.js';
 import { useToastStore } from '../stores/toastStore.js';
 import sound from '../components/SoundEngine.js';
+import html2canvas from 'html2canvas';
 
 export default function StreakSharePage() {
   const cardRef = useRef(null);
@@ -30,7 +31,6 @@ export default function StreakSharePage() {
     sound.playClick();
     setIsDownloading(true);
     try {
-      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
         useCORS: true,

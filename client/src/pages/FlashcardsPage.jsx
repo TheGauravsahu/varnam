@@ -4,6 +4,7 @@ import { CheckCircle2, XCircle, RotateCcw, Layers, ArrowLeft, Trophy } from 'luc
 import axiosClient from '../api/axiosClient.js';
 import { useToastStore } from '../stores/toastStore.js';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader.jsx';
 
 const MOCK_CARDS = [
   { id: 1, word: 'Hola', language: 'Spanish', translation: 'Hello', example: '¡Hola! ¿Cómo estás?' },
@@ -82,23 +83,19 @@ export default function FlashcardsPage() {
   const queryClient = useQueryClient();
   const { addToast } = useToastStore();
   const navigate = useNavigate();
-  const [cards, setCards] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionStats, setSessionStats] = useState({ remembered: 0, forgot: 0 });
   const [isComplete, setIsComplete] = useState(false);
 
-  const { isLoading } = useQuery({
+  const { data: flashcardsData, isLoading } = useQuery({
     queryKey: ['flashcards'],
     queryFn: async () => {
       try {
         const res = await axiosClient.get('/vocabulary/flashcards');
         return res.data;
       } catch {
-        return { cards: MOCK_CARDS };
+        return { flashcards: MOCK_CARDS };
       }
-    },
-    onSuccess: (data) => {
-      setCards(data.cards || MOCK_CARDS);
     }
   });
 
@@ -110,7 +107,7 @@ export default function FlashcardsPage() {
     }
   });
 
-  const activeCards = cards || MOCK_CARDS;
+  const activeCards = flashcardsData?.flashcards || MOCK_CARDS;
   const remainingCards = activeCards.slice(currentIndex);
   const dueCount = activeCards.length;
 
@@ -136,8 +133,8 @@ export default function FlashcardsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+      <div className="flex items-center justify-center min-h-[70vh] w-full">
+        <Loader message="Loading review deck..." />
       </div>
     );
   }

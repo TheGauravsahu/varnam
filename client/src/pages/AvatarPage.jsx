@@ -5,6 +5,7 @@ import { ArrowLeft, Lock, CheckCircle2, Smile, Zap } from 'lucide-react';
 import axiosClient from '../api/axiosClient.js';
 import { useToastStore } from '../stores/toastStore.js';
 import sound from '../components/SoundEngine.js';
+import Loader from '../components/Loader.jsx';
 
 const TABS = [
   { key: 'hair', label: 'Hair', emoji: '💇' },
@@ -128,11 +129,8 @@ export default function AvatarPage() {
 
   if (isLoadingItems || isLoadingEquipped) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="animate-pulse flex flex-col items-center gap-4 text-zinc-500">
-          <div className="h-10 w-10 rounded-full border-4 border-pink-500/20 border-t-pink-500 animate-spin" />
-          <span className="text-sm font-semibold">Loading Customizer...</span>
-        </div>
+      <div className="flex items-center justify-center min-h-[70vh] w-full">
+        <Loader message="Loading customizer closet..." />
       </div>
     );
   }

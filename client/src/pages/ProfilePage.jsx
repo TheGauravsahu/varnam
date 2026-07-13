@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import axiosClient from '../api/axiosClient.js';
 import sound from '../components/SoundEngine.js';
+import Loader from '../components/Loader.jsx';
 
 // Friend Follow validation schema
 const followSchema = z.object({
@@ -68,8 +69,8 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-500" />
+      <div className="flex items-center justify-center min-h-[70vh] w-full">
+        <Loader message="Loading profile stats..." />
       </div>
     );
   }
