@@ -1,11 +1,11 @@
-import axios from 'axios';
+import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
   withCredentials: true, // Crucial for HTTP-only JWT cookies
   headers: {
-    'Content-Type': 'application/json'
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 // Response interceptor to handle authorization errors globally
@@ -17,7 +17,7 @@ axiosClient.interceptors.response.use(
       // Avoid circular dependencies in import: resolve via global storage if needed
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosClient;
