@@ -1,0 +1,19 @@
+{
+  "name": "Varnam Language Learning",
+  "short_name": "Varnam",
+  "description": "Master Languages Beautifully & Fast. A premium Apple-inspired language learning platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#16171d",
+  "theme_color": "#DB2777",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

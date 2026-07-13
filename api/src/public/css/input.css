@@ -1,0 +1,61 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scale down layout by ~10% for high information density */
+html {
+  font-size: 14.5px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@layer base {
+  body {
+    @apply font-body bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300 min-h-screen overflow-x-hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+/* Glassmorphism Styles */
+.glass-light {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--tw-shadow-glass-light);
+}
+
+.glass-dark {
+  background: rgba(18, 18, 20, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: var(--tw-shadow-glass-dark);
+}
+
+/* Custom premium buttons - Pink Palette */
+.btn-premium {
+  @apply relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-white shadow-premium transition-all duration-300 active:scale-95;
+  background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+}
+.btn-premium:hover {
+  background: linear-gradient(135deg, #F43F5E 0%, #EC4899 100%);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.35);
+}
+
+.btn-premium-secondary {
+  @apply relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-zinc-700 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-800 transition-all duration-300 active:scale-95 hover:bg-zinc-100 dark:hover:bg-zinc-800/50;
+}
+
+/* Progress and active tracking */
+.active-ring {
+  background: conic-gradient(#EC4899 var(--progress, 0%), rgba(236,72,153,0.1) 0%);
+}

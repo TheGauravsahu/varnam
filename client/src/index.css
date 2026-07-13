@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Geist:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* Enable class-based dark mode in Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-heading: "Plus Jakarta Sans", sans-serif;
+  --font-sans: "Geist", "Inter", sans-serif;
+  --font-number: "Geist", sans-serif;
+
+  --shadow-premium: 0 8px 30px rgba(0, 0, 0, 0.03);
+  --shadow-premium-hover: 0 14px 40px rgba(0, 0, 0, 0.06);
+}
+
+/* Scale down layout by ~10% for high information density */
+html {
+  font-size: 14.5px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-zinc-50);
+  color: var(--color-zinc-900);
+}
+
+.dark body {
+  background-color: var(--color-zinc-950);
+  color: var(--color-zinc-100);
+}
+
+/* Custom premium buttons - Pink Palette */
+.btn-premium {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  box-shadow: var(--shadow-premium);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  border: none;
+  cursor: pointer;
+}
+.btn-premium:hover {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+  box-shadow: 0 10px 25px rgba(236, 72, 153, 0.35);
+}
+.btn-premium:active {
+  transform: scale(0.95);
+}
+
+.btn-premium-secondary {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-weight: 600;
+  color: var(--color-zinc-700);
+  border: 1px solid var(--color-zinc-200);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  cursor: pointer;
+  background: transparent;
+}
+.dark .btn-premium-secondary {
+  color: var(--color-zinc-200);
+  border-color: var(--color-zinc-800);
+}
+.btn-premium-secondary:hover {
+  background-color: var(--color-zinc-100);
+}
+.dark .btn-premium-secondary:hover {
+  background-color: rgba(39, 39, 42, 0.5);
+}
+.btn-premium-secondary:active {
+  transform: scale(0.95);
+}
+
+/* Progress and active tracking */
+.active-ring {
+  background: conic-gradient(
+    #ec4899 var(--progress, 0%),
+    rgba(236, 72, 153, 0.1) 0%
+  );
+}
+
+.dark .active-ring {
+  background: conic-gradient(
+    #ec4899 var(--progress, 0%),
+    rgba(236, 72, 153, 0.05) 0%
+  );
+}
+
+/* Pulsing background glow animation keyframes */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    filter: blur(100px);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.25);
+    opacity: 1;
+    filter: blur(120px);
+  }
+}
+
+.pulsing-glow {
+  animation: pulse-glow 6s ease-in-out infinite;
+}
